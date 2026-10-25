@@ -514,8 +514,55 @@
             transform: translateY(0);
         }
 
+        /* ==========================================================================
+           8. LEFT SECTION RAIL
+           ========================================================================== */
+        #section-rail {
+            position: fixed;
+            top: 50%;
+            left: 16px;
+            transform: translateY(-50%);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            pointer-events: auto;
+        }
+
+        .rail-tick {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .tick-line {
+            width: 14px;
+            height: 2px;
+            background-color: rgba(217, 218, 230, 0.25);
+            border-radius: 2px;
+            transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+        }
+
+        .tick-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .rail-tick:hover .tick-line { width: 24px; background-color: rgba(217, 218, 230, 0.85); }
+        .rail-tick:hover .tick-label { opacity: 1; transform: translateX(0); }
+        .rail-tick.active .tick-line { width: 28px; background-color: var(--text); box-shadow: 0 0 8px rgba(217, 218, 230, 0.4); }
+        .rail-tick.active .tick-label { color: var(--text); opacity: 0.8; }
+
         /* Responsive */
         @media(max-width: 900px) {
+            #section-rail { display: none; }
             .section-title span, .hero-sub { white-space: normal; }
             .service-card { padding: 32px; }
             .nav-dock { justify-content: space-between; }
@@ -538,6 +585,18 @@
     </style>
 </head>
 <body>
+
+<!-- LEFT SECTION RAIL -->
+<div id="section-rail">
+    <a href="#home" class="rail-tick active" data-label="Hero">
+        <span class="tick-line"></span>
+        <span class="tick-label">Hero</span>
+    </a>
+    <a href="#ecosystem" class="rail-tick" data-label="Ecosystem">
+        <span class="tick-line"></span>
+        <span class="tick-label">Ecosystem</span>
+    </a>
+</div>
 
 <!-- OVERLAY SCROLLBAR -->
 <div id="custom-scrollbar-track">
@@ -730,6 +789,28 @@
             card.style.setProperty('--mouse-y', `${y}px`);
         });
     });
+
+    // Left Section Rail Observer
+    const sections = document.querySelectorAll('section');
+    const railTicks = document.querySelectorAll('.rail-tick');
+
+    const railObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const activeId = entry.target.getAttribute('id');
+                railTicks.forEach(tick => {
+                    const href = tick.getAttribute('href').replace('#', '');
+                    if (href === activeId) {
+                        tick.classList.add('active');
+                    } else {
+                        tick.classList.remove('active');
+                    }
+                });
+            }
+        });
+    }, { threshold: 0.4 });
+
+    sections.forEach(sec => railObserver.observe(sec));
 
     // Ambient Blobs Animation Engine
     class RegionBlob {
