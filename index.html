@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Void — The Open Ecosystem</title>
+
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@800&family=Varela+Round&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. RESET & CSS VARIABLES
+           ========================================================================== */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg: #050508;
+            --surface: rgba(255, 255, 255, 0.03);
+            --surface-solid: #151515;
+            --border: rgba(255, 255, 255, 0.08);
+            --text: #D9DAE6;
+            --muted: rgba(217, 218, 230, 0.55);
+
+            --radius-btn: 12px;
+            --radius-card: 28px;
+            --radius-dock: 24px;
+            --blur-radius: 15px;
+        }
+
+        /* ==========================================================================
+           2. BASE & LAYOUT
+           ========================================================================== */
+        html {
+            scroll-behavior: smooth;
+            background-color: var(--bg);
+            scrollbar-width: none;
+        }
+        html::-webkit-scrollbar { display: none; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Varela Round', sans-serif;
+            overflow-x: hidden;
+            position: relative;
+            cursor: default;
+        }
+
+        p, h1, h2, h3, span, b {
+            cursor: default;
+        }
+
+        section { 
+            position: relative; 
+            z-index: 1; 
+            scroll-margin-top: 100px;
+        }
+
+        /* ==========================================================================
+           3. OVERLAY SCROLLBAR
+           ========================================================================== */
+        #custom-scrollbar-track {
+            position: fixed;
+            top: 4px;
+            bottom: 4px;
+            right: 0;
+            width: 16px;
+            z-index: 9999;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        #custom-scrollbar-thumb {
+            position: absolute;
+            top: 0;
+            right: 3px;
+            width: 4px;
+            border-radius: 10px;
+            background-color: rgba(217, 218, 230, 0.35);
+            cursor: pointer;
+            will-change: transform, width, right;
+            transition: width 0.15s ease, right 0.15s ease, background-color 0.15s ease;
+        }
+
+        #custom-scrollbar-track:hover #custom-scrollbar-thumb,
+        #custom-scrollbar-thumb.dragging {
+            width: 8px;
+            right: 4px;
+            background-color: rgba(217, 218, 230, 0.75);
+            cursor: pointer;
+        }
+
+        /* ==========================================================================
+           4. AMBIENT BLOBS
+           ========================================================================== */
+        .blob-field {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(var(--blur-radius));
+            opacity: 0.18;
+            will-change: transform;
+            top: 0;
+            left: 0;
+        }
+
+        .blob-1 { width: 450px; height: 450px; background: radial-gradient(circle, var(--text), transparent 70%); }
+        .blob-2 { width: 420px; height: 420px; background: radial-gradient(circle, var(--text), transparent 70%); }
+        .blob-3 { width: 380px; height: 380px; background: radial-gradient(circle, var(--text), transparent 70%); }
+        .blob-4 { width: 400px; height: 400px; background: radial-gradient(circle, var(--text), transparent 70%); }
+        .blob-5 { width: 360px; height: 360px; background: radial-gradient(circle, var(--text), transparent 70%); }
+
+        /* ==========================================================================
+           5. NAVIGATION DOCK
+           ========================================================================== */
+        .nav-dock {
+            position: fixed;
+            top: 18px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: min(1140px, 94vw);
+            height: 60px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 24px;
+            background: rgba(5, 5, 8, 0.6);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-dock);
+            transition: all 0.9s cubic-bezier(0.29, 1.37, 0.74, 1);
+            gap: 24px;
+        }
+
+        .nav-section-left {
+            display: flex;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .nav-logo {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            font-size: 1.15rem;
+            letter-spacing: -0.02em;
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        .nav-section-center {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex: 1;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: clamp(16px, 3vw, 36px);
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--muted);
+            font-size: 0.9rem;
+            text-decoration: none;
+            font-family: 'Varela Round', sans-serif;
+            font-weight: 400;
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-links a:hover { color: var(--text); }
+
+        .nav-section-right {
+            display: flex;
+            align-items: center;
+            gap: clamp(12px, 2vw, 24px);
+            flex-shrink: 0;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: clamp(16px, 2.5vw, 28px);
+        }
+
+        .nav-action-link {
+            color: var(--muted);
+            font-size: 0.9rem;
+            text-decoration: none;
+            font-family: 'Varela Round', sans-serif;
+            font-weight: 400;
+            transition: color 0.2s ease;
+            white-space: nowrap;
+        }
+
+        .nav-action-link:hover { color: var(--text); }
+
+        .burger {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            margin: 0;
+        }
+
+        .burger span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            margin: 5px 0;
+            background: var(--text);
+            border-radius: var(--radius-btn);
+            transition: 0.28s;
+        }
+
+        /* ==========================================================================
+           6. HERO SECTION
+           ========================================================================== */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 140px 48px 80px;
+        }
+
+        .hero-logo-frame {
+            width: min(480px, 80vw);
+            height: min(480px, 80vw);
+            border-radius: clamp(32px, 6vw, 64px);
+            overflow: hidden;
+            margin-bottom: 36px;
+            background: #000;
+            border: 1px solid var(--border);
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
+            animation: fadeUp 0.8s ease both;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .hero-logo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(3rem, 8vw, 6.5rem);
+            font-weight: 800;
+            line-height: 1.0;
+            letter-spacing: -0.04em;
+            margin-bottom: 24px;
+            color: var(--text);
+            animation: fadeUp 0.8s ease 0.1s both;
+        }
+
+        .hero-sub {
+            font-size: clamp(0.95rem, 1.8vw, 1.25rem);
+            color: var(--muted);
+            white-space: nowrap;
+            line-height: 1.6;
+            margin-bottom: 48px;
+            animation: fadeUp 0.8s ease 0.2s both;
+        }
+
+        .hero-sub .font-syne {
+            font-family: 'Syne', sans-serif;
+            font-weight: 800;
+            color: var(--text);
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            justify-content: center;
+            animation: fadeUp 0.8s ease 0.3s both;
+        }
+
+        .btn-primary, .btn-secondary {
+            height: 44px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 24px;
+            border-radius: var(--radius-btn);
+            font-family: 'Varela Round', sans-serif !important;
+            font-size: 0.9rem;
+            font-weight: 400;
+            text-decoration: none;
+            color: var(--text) !important;
+            font-style: normal;
+            letter-spacing: normal;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            -webkit-font-smoothing: antialiased;
+            backface-visibility: hidden;
+            transform: translateZ(0);
+            transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, border-color 0.2s ease;
+            will-change: transform;
+        }
+
+        .btn-primary {
+            background: var(--surface-solid);
+            border: 1px solid var(--border);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px) translateZ(0);
+            background: #222222;
+            border-color: rgba(255, 255, 255, 0.25);
+            color: var(--text) !important;
+        }
+
+        .btn-secondary {
+            background: var(--surface);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px) translateZ(0);
+            background: rgba(255, 255, 255, 0.08);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text) !important;
+        }
+
+        /* ==========================================================================
+           7. APPS / SERVICES SECTION
+           ========================================================================== */
+        .ecosystem {
+            padding: 60px 32px 140px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .section-label {
+            font-size: 0.75rem;
+            letter-spacing: 0.12em;
+            text-transform: uppercase;
+            color: var(--text);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 4vw, 3.2rem);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.15;
+            margin-bottom: 64px;
+        }
+
+        .section-title span {
+            display: block;
+            white-space: nowrap;
+        }
+
+        .services-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+        }
+
+        .service-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-card);
+            padding: 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 36px;
+            position: relative;
+            overflow: hidden;
+            transition: border-color 0.3s ease;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(
+                600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                rgba(255, 255, 255, 0.06),
+                transparent 40%
+            );
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 0;
+        }
+
+        .service-card:hover::before { opacity: 1; }
+
+        .service-card:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+        }
+
+        .card-body, .card-vis {
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ASPECT-RATIO RESPONSIVE PREVIEW CONTAINER */
+        .card-vis {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .card-vis img {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+        }
+
+        .card-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            width: fit-content;
+            margin-bottom: 20px;
+        }
+
+        .card-badge span {
+            width: 5px; height: 5px; background: #facc15; border-radius: 50%;
+        }
+
+        .card-content h3 {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 4px;
+            font-weight: 400;
+        }
+
+        .card-content h3.syne-huge {
+            font-family: 'Syne', sans-serif;
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
+            font-weight: 800;
+            color: var(--text);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 20px;
+        }
+
+        .card-content p {
+            color: var(--muted);
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 32px;
+        }
+
+        /* Animations */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(24px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .reveal {
+            opacity: 0;
+            transform: translateY(32px);
+            transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
+        @media(max-width: 900px) {
+            .section-title span, .hero-sub { white-space: normal; }
+            .service-card { padding: 32px; }
+            .nav-dock { justify-content: space-between; }
+            .nav-section-center, .nav-section-right { display: none; }
+            .nav-dock.open .nav-section-center {
+                display: flex;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                width: 100%;
+                background: rgba(5, 5, 8, 0.95);
+                border: 1px solid var(--border);
+                border-radius: var(--radius-dock);
+                padding: 24px;
+                gap: 16px;
+            }
+            .burger { display: block; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- OVERLAY SCROLLBAR -->
+<div id="custom-scrollbar-track">
+    <div id="custom-scrollbar-thumb"></div>
+</div>
+
+<!-- 5 AMBIENT BLOBS -->
+<div class="blob-field">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+    <div class="blob blob-4"></div>
+    <div class="blob blob-5"></div>
+</div>
+
+<!-- NAVIGATION DOCK -->
+<nav class="nav-dock">
+    <div class="nav-section-left">
+        <a href="#home" class="nav-logo">Void</a>
+    </div>
+    
+    <div class="nav-section-center">
+        <ul class="nav-links">
+            <li><a href="https://cc.projectvoid.dev" target="_blank">Cloud Console</a></li>
+            <li><a href="https://about.projectvoid.dev" target="_blank">About Void</a></li>
+            <li><a href="https://orgs.projectvoid.dev" target="_blank">For Organizations</a></li>
+        </ul>
+    </div>
+
+    <div class="nav-section-right">
+        <div class="nav-actions">
+            <a href="#ecosystem" class="nav-action-link">Explore apps</a>
+            <a href="https://os.projectvoid.dev" class="nav-action-link">Make me switch</a>
+        </div>
+    </div>
+
+    <button class="burger" id="burgerBtn" aria-label="Toggle Navigation">
+        <span></span>
+        <span></span>
+        <span></span>
+    </button>
+</nav>
+
+<!-- HERO SECTION -->
+<section class="hero" id="home">
+    <div class="hero-logo-frame">
+        <img src="logo.jpg" alt="Void Logo" onerror="this.src='logo.png'; this.onerror=function(){this.src='logo.svg';}">
+    </div>
+    
+    <h1 class="hero-title">No bloat. Just Void.</h1>
+    
+    <p class="hero-sub">
+        The next-gen, fully open-source ecosystem for <span class="font-syne">everyone</span>.
+    </p>
+
+    <div class="hero-buttons">
+        <a href="#ecosystem" class="btn-primary">Explore apps</a>
+        <a href="https://os.projectvoid.dev" class="btn-secondary">Make me switch</a>
+    </div>
+</section>
+
+<!-- ECOSYSTEM / SERVICES SECTION -->
+<section class="ecosystem" id="ecosystem">
+    <div class="reveal">
+        <p class="section-label">Core Suite</p>
+        <h2 class="section-title">
+            <span>Built from the ground up.</span>
+            <span>Zero bloatware.</span>
+        </h2>
+    </div>
+
+    <div class="services-stack reveal">
+        <!-- VoidOS Card -->
+        <div class="service-card">
+            <div class="card-vis">
+                <img src="os.png" alt="VoidOS Preview">
+            </div>
+            <div class="card-body">
+                <div class="card-badge"><span></span> In development</div>
+                <div class="card-content">
+                    <h3>An OS</h3>
+                    <h3 class="syne-huge">for everyone</h3>
+                    <p>A privacy-first, uncompromised operating system built around adaptive layout tokens, curved panel corners, and total user control.</p>
+                </div>
+                <a href="https://os.projectvoid.dev" class="btn-primary">Explore VoidOS →</a>
+            </div>
+        </div>
+
+        <!-- Void Brief Card -->
+        <div class="service-card">
+            <div class="card-vis">
+                <img src="brief.png" alt="Void Brief Preview">
+            </div>
+            <div class="card-body">
+                <div class="card-badge"><span></span> Active Pilot</div>
+                <div class="card-content">
+                    <h3 class="syne-huge">The ultimate presentation app</h3>
+                    <p>Tired of old, ugly, boring plain-text presentations? Picture this: you describe the design and features, add resources, click on "Generate," and the best-looking presentation in your whole life, with interactive elements is done. And there's more!</p>
+                </div>
+                <a href="https://brief.projectvoid.dev" class="btn-primary">Explore Void Brief →</a>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- SCRIPTS -->
+<script>
+    // REAL-TIME INSTANT CUSTOM SCROLLBAR DRAGGING
+    const thumb = document.getElementById('custom-scrollbar-thumb');
+    const track = document.getElementById('custom-scrollbar-track');
+    let isDragging = false;
+    let startY = 0;
+    let startScrollTop = 0;
+
+    function updateScrollbarPosition() {
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        if (maxScroll <= 0) return;
+        const trackHeight = track.offsetHeight;
+        const thumbHeight = Math.max(40, (trackHeight / document.documentElement.scrollHeight) * trackHeight);
+        const thumbTop = (window.scrollY / maxScroll) * (trackHeight - thumbHeight);
+        thumb.style.height = `${thumbHeight}px`;
+        thumb.style.transform = `translate3d(0, ${thumbTop}px, 0)`;
+    }
+
+    window.addEventListener('scroll', () => {
+        if (!isDragging) updateScrollbarPosition();
+    }, { passive: true });
+    
+    window.addEventListener('resize', updateScrollbarPosition);
+    updateScrollbarPosition();
+
+    thumb.addEventListener('mousedown', (e) => {
+        isDragging = true;
+        startY = e.clientY;
+        startScrollTop = window.scrollY;
+        thumb.classList.add('dragging');
+        document.body.style.userSelect = 'none';
+        e.preventDefault();
+    });
+
+    window.addEventListener('mousemove', (e) => {
+        if (!isDragging) return;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        const deltaY = e.clientY - startY;
+        const trackHeight = track.offsetHeight;
+        const thumbHeight = thumb.offsetHeight || 40;
+        const availableTrack = trackHeight - thumbHeight;
+
+        if (availableTrack > 0) {
+            const scrollRatio = deltaY / availableTrack;
+            const targetScroll = startScrollTop + (scrollRatio * maxScroll);
+            window.scrollTo({ top: targetScroll, behavior: 'instant' });
+            updateScrollbarPosition();
+        }
+    });
+
+    window.addEventListener('mouseup', () => {
+        if (isDragging) {
+            isDragging = false;
+            thumb.classList.remove('dragging');
+            document.body.style.userSelect = '';
+        }
+    });
+
+    // Mobile nav toggle
+    const burger = document.getElementById('burgerBtn');
+    const dock = document.querySelector('.nav-dock');
+    burger.addEventListener('click', () => {
+        dock.classList.toggle('open');
+    });
+
+    // Reveal on scroll observer
+    const observer = new IntersectionObserver((entries) => {
+        entries.forEach(e => {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                observer.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.1 });
+    document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+    // Card Spotlight Effect
+    document.querySelectorAll('.service-card').forEach(card => {
+        card.addEventListener('mousemove', e => {
+            const rect = card.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            card.style.setProperty('--mouse-x', `${x}px`);
+            card.style.setProperty('--mouse-y', `${y}px`);
+        });
+    });
+
+    // Ambient Blobs Animation Engine
+    class RegionBlob {
+        constructor(element, bounds) {
+            this.el = element;
+            this.bounds = bounds;
+            this.x = bounds.minX + Math.random() * (bounds.maxX - bounds.minX);
+            this.y = bounds.minY + Math.random() * (bounds.maxY - bounds.minY);
+            this.vx = (Math.random() - 0.5) * 1.5;
+            this.vy = (Math.random() - 0.5) * 1.5;
+            this.progress = 0;
+            this.speed = 0.0018 + Math.random() * 0.0012;
+            this.generateNextPath();
+            this.animate();
+        }
+
+        generateNextPath() {
+            this.p0 = { x: this.x, y: this.y };
+            const angle = Math.atan2(this.vy, this.vx) + (Math.random() - 0.5) * 1.0;
+            const distance = 80 + Math.random() * 140;
+            const targetX = this.p0.x + Math.cos(angle) * distance;
+            const targetY = this.p0.y + Math.sin(angle) * distance;
+            this.p3 = {
+                x: Math.min(Math.max(this.bounds.minX, targetX), this.bounds.maxX),
+                y: Math.min(Math.max(this.bounds.minY, targetY), this.bounds.maxY)
+            };
+            this.p1 = { x: this.p0.x + this.vx * 40, y: this.p0.y + this.vy * 40 };
+            this.p2 = { x: this.p3.x - Math.cos(angle) * 40, y: this.p3.y - Math.sin(angle) * 40 };
+            this.progress = 0;
+        }
+
+        animate() {
+            this.progress += this.speed;
+            if (this.progress >= 1) {
+                this.vx = (this.p3.x - this.p2.x) / 40;
+                this.vy = (this.p3.y - this.p2.y) / 40;
+                this.x = this.p3.x;
+                this.y = this.p3.y;
+                this.generateNextPath();
+            }
+            const u = 1 - this.progress;
+            const tt = this.progress * this.progress;
+            const uu = u * u;
+            const pos = {
+                x: uu * u * this.p0.x + 3 * uu * this.progress * this.p1.x + 3 * u * tt * this.p2.x + tt * this.progress * this.p3.x,
+                y: uu * u * this.p0.y + 3 * uu * this.progress * this.p1.y + 3 * u * tt * this.p2.y + tt * this.progress * this.p3.y
+            };
+            this.el.style.transform = `translate3d(${pos.x}px, ${pos.y}px, 0)`;
+            requestAnimationFrame(() => this.animate());
+        }
+    }
+
+    window.addEventListener('load', () => {
+        const blobElements = document.querySelectorAll('.blob');
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        const regions = [
+            { minX: -100, maxX: w * 0.35, minY: -100, maxY: h * 0.35 },
+            { minX: w * 0.55, maxX: w - 200, minY: -100, maxY: h * 0.35 },
+            { minX: w * 0.3, maxX: w * 0.6, minY: h * 0.3, maxY: h * 0.6 },
+            { minX: -100, maxX: w * 0.35, minY: h * 0.55, maxY: h - 150 },
+            { minX: w * 0.55, maxX: w - 200, minY: h * 0.55, maxY: h - 150 }
+        ];
+        blobElements.forEach((el, idx) => {
+            new RegionBlob(el, regions[idx % regions.length]);
+        });
+    });
+</script>
+</body>
+</html>
