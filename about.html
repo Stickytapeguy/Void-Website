@@ -196,7 +196,7 @@
             white-space: nowrap;
         }
 
-        .nav-links a:hover { color: var(--text); }
+        .nav-links a:hover, .nav-links a.active { color: var(--text); }
 
         .nav-section-right {
             display: flex;
@@ -656,7 +656,7 @@
     <div class="nav-section-center">
         <ul class="nav-links">
             <li><a href="https://cc.projectvoid.dev" target="_blank">Cloud Console</a></li>
-            <li><a href="https://about.projectvoid.dev">About Void</a></li>
+            <li><a href="https://about.projectvoid.dev" class="active">About Void</a></li>
             <li><a href="https://orgs.projectvoid.dev" target="_blank">For Organizations</a></li>
         </ul>
     </div>
@@ -913,6 +913,7 @@
             this.bounds = bounds;
             this.x = bounds.minX + Math.random() * (bounds.maxX - bounds.minX);
             this.y = bounds.minY + Math.random() * (bounds.maxY - bounds.minY);
+            this.el.style.transform = `translate3d(${this.x}px, ${this.y}px, 0)`;
             this.vx = (Math.random() - 0.5) * 1.5;
             this.vy = (Math.random() - 0.5) * 1.5;
             this.progress = 0;
@@ -957,20 +958,18 @@
         }
     }
 
-    window.addEventListener('load', () => {
-        const blobElements = document.querySelectorAll('.blob');
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        const regions = [
-            { minX: -100, maxX: w * 0.35, minY: -100, maxY: h * 0.35 },
-            { minX: w * 0.55, maxX: w - 200, minY: -100, maxY: h * 0.35 },
-            { minX: w * 0.3, maxX: w * 0.6, minY: h * 0.3, maxY: h * 0.6 },
-            { minX: -100, maxX: w * 0.35, minY: h * 0.55, maxY: h - 150 },
-            { minX: w * 0.55, maxX: w - 200, minY: h * 0.55, maxY: h - 150 }
-        ];
-        blobElements.forEach((el, idx) => {
-            new RegionBlob(el, regions[idx % regions.length]);
-        });
+    const blobElements = document.querySelectorAll('.blob');
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const regions = [
+        { minX: -100, maxX: w * 0.35, minY: -100, maxY: h * 0.35 },
+        { minX: w * 0.55, maxX: w - 200, minY: -100, maxY: h * 0.35 },
+        { minX: w * 0.3, maxX: w * 0.6, minY: h * 0.3, maxY: h * 0.6 },
+        { minX: -100, maxX: w * 0.35, minY: h * 0.55, maxY: h - 150 },
+        { minX: w * 0.55, maxX: w - 200, minY: h * 0.55, maxY: h - 150 }
+    ];
+    blobElements.forEach((el, idx) => {
+        new RegionBlob(el, regions[idx % regions.length]);
     });
 </script>
 </body>
