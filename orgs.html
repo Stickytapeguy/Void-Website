@@ -362,7 +362,7 @@
         }
 
         /* ==========================================================================
-           7. ENTERPRISE SUITE SECTION
+           7. ENTERPRISE SUITE SECTION & CAROUSEL STYLES
            ========================================================================== */
         .ecosystem {
             padding: 60px 32px 140px;
@@ -431,10 +431,7 @@
         }
 
         .service-card:hover::before { opacity: 1; }
-
-        .service-card:hover {
-            border-color: rgba(255, 255, 255, 0.18);
-        }
+        .service-card:hover { border-color: rgba(255, 255, 255, 0.18); }
 
         .card-body, .card-vis {
             position: relative;
@@ -501,6 +498,13 @@
             font-size: 1.05rem;
             line-height: 1.7;
             margin-bottom: 32px;
+        }
+
+        /* Carousel rotating text styles */
+        .rotating-word {
+            display: inline-block;
+            transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease, filter 0.35s ease;
+            will-change: transform, opacity, filter;
         }
 
         /* Animations */
@@ -635,7 +639,7 @@
     <div class="nav-section-right">
         <div class="nav-actions">
             <a href="#ecosystem" class="nav-action-link">Explore apps</a>
-            <a href="https://os.projectvoid.dev" class="nav-action-link">Make me switch</a>
+            <a href="https://switch.projectvoid.dev" class="nav-action-link">Make me switch</a>
         </div>
     </div>
 
@@ -655,12 +659,12 @@
     <h1 class="hero-title">Software for teams. Built without bloat.</h1>
 
     <p class="hero-sub">
-        Give your team independent tools, private cloud instances, and OS fleets controlled by <span class="font-syne">you</span>.
+        Give your team independent tools, private cloud instances, and OS environments controlled by <span class="font-syne">you</span>.
     </p>
 
     <div class="hero-buttons">
         <a href="#ecosystem" class="btn-primary">Explore apps for your company</a>
-        <a href="https://os.projectvoid.dev" class="btn-secondary">Make me switch</a>
+        <a href="https://switch.projectvoid.dev" class="btn-secondary">Make me switch</a>
     </div>
 </section>
 
@@ -675,19 +679,21 @@
     </div>
 
     <div class="services-stack reveal">
-        <!-- Void Fleet Management Card -->
+        <!-- VoidOS Card with Carousel Text -->
         <div class="service-card">
             <div class="card-vis">
-                <img src="os.png" alt="VoidOS Fleet Preview">
+                <img src="os.png" alt="VoidOS Preview">
             </div>
             <div class="card-body">
-                <div class="card-badge"><span></span> Fleet Ready</div>
+                <div class="card-badge"><span></span> Enterprise Edition</div>
                 <div class="card-content">
                     <h3>VoidOS</h3>
-                    <h3 class="syne-huge">for Workstations</h3>
+                    <h3 class="syne-huge">
+                        for <span id="rotating-text" class="rotating-word">Workstations</span>
+                    </h3>
                     <p>Deploy high-performance, non-bloated desktop environments across your organization with centralized deployment tokens and total privacy enforcement.</p>
                 </div>
-                <a href="https://os.projectvoid.dev" class="btn-primary">Explore VoidOS Fleet →</a>
+                <a href="https://os.projectvoid.dev" class="btn-primary">Explore VoidOS →</a>
             </div>
         </div>
 
@@ -747,17 +753,14 @@
 
         window.scrollTo(0, currentScrollY);
 
-        // Navbar height condensation on scroll
         if (currentScrollY > 60) {
             navDock.classList.add('scrolled');
         } else {
             navDock.classList.remove('scrolled');
         }
 
-        // Parallax effects on hero logo
         if (heroLogo) heroLogo.style.transform = `translate3d(0, ${currentScrollY * 0.25}px, 0) scale(${Math.max(0.85, 1 - currentScrollY * 0.0008)})`;
 
-        // Subdued Velocity Card Pitch
         const pitch = Math.max(-2, Math.min(2, scrollVelocity * 0.08));
         cards.forEach(card => {
             card.style.transform = `perspective(1000px) rotateX(${-pitch}deg)`;
@@ -826,6 +829,66 @@
         navDock.classList.toggle('open');
     });
 
+    // Anchor link scroll handler - update custom scroll state and URL when clicking section links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = anchor.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+                targetScrollY = targetPosition;
+                history.pushState(null, null, '#' + targetId);
+                if (!isMoving) {
+                    isMoving = true;
+                    requestAnimationFrame(updateScrollPhysics);
+                }
+            }
+        });
+    });
+
+    // ROBUST BLUR/FADE CAROUSEL ENGINE FOR ORGS
+    const rotatingEl = document.getElementById('rotating-text');
+    const orgWords = [
+        "Workstations",
+        "Enterprises",
+        "Private Clouds",
+        "Infrastructure",
+        "Absolute Control",
+        "Real Work",
+        "Power Users",
+        "People Who Hate Bloat",
+        "Teams That Ship",
+        "Focus",
+        "Performance",
+        "Servers",
+        "What again???"
+    ];
+    let wordIdx = 0;
+
+    if (rotatingEl) {
+        setInterval(() => {
+            // Blur & slide up
+            rotatingEl.style.opacity = '0';
+            rotatingEl.style.transform = 'translateY(-14px)';
+            rotatingEl.style.filter = 'blur(8px)';
+
+            setTimeout(() => {
+                wordIdx = (wordIdx + 1) % orgWords.length;
+                rotatingEl.textContent = orgWords[wordIdx];
+                
+                // Position below before fading back in
+                rotatingEl.style.transform = 'translateY(14px)';
+
+                setTimeout(() => {
+                    rotatingEl.style.opacity = '1';
+                    rotatingEl.style.transform = 'translateY(0px)';
+                    rotatingEl.style.filter = 'blur(0px)';
+                }, 50);
+            }, 350);
+        }, 2800);
+    }
+
     // Reveal on scroll observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => {
@@ -864,6 +927,7 @@
                         tick.classList.remove('active');
                     }
                 });
+                history.pushState(null, null, '#' + activeId);
             }
         });
     }, { threshold: 0.4 });

@@ -635,7 +635,7 @@
     <div class="nav-section-right">
         <div class="nav-actions">
             <a href="#ecosystem" class="nav-action-link">Explore apps</a>
-            <a href="https://os.projectvoid.dev" class="nav-action-link">Make me switch</a>
+            <a href="https://switch.projectvoid.dev" class="nav-action-link">Make me switch</a>
         </div>
     </div>
 
@@ -660,7 +660,7 @@
 
     <div class="hero-buttons">
         <a href="#ecosystem" class="btn-primary">Explore apps</a>
-        <a href="https://os.projectvoid.dev" class="btn-secondary">Make me switch</a>
+        <a href="https://switch.projectvoid.dev" class="btn-secondary">Make me switch</a>
     </div>
 </section>
 
@@ -827,6 +827,24 @@
         navDock.classList.toggle('open');
     });
 
+    // Anchor link scroll handler - update custom scroll state and URL when clicking section links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', (e) => {
+            e.preventDefault();
+            const targetId = anchor.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            if (targetElement) {
+                const targetPosition = targetElement.getBoundingClientRect().top + window.scrollY;
+                targetScrollY = targetPosition;
+                history.pushState(null, null, '#' + targetId);
+                if (!isMoving) {
+                    isMoving = true;
+                    requestAnimationFrame(updateScrollPhysics);
+                }
+            }
+        });
+    });
+
     // Reveal on scroll observer
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(e => {
@@ -865,6 +883,7 @@
                         tick.classList.remove('active');
                     }
                 });
+                history.pushState(null, null, '#' + activeId);
             }
         });
     }, { threshold: 0.4 });
