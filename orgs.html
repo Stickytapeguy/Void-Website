@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Void for Organizations — The Sovereign Enterprise Ecosystem</title>
+    <title>Void for Organizations — The Sovereign Ecosystem</title>
 
     <!-- FONTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -56,9 +56,9 @@
             cursor: default;
         }
 
-        section {
-            position: relative;
-            z-index: 1;
+        section { 
+            position: relative; 
+            z-index: 1; 
             scroll-margin-top: 100px;
         }
 
@@ -115,7 +115,7 @@
             position: absolute;
             border-radius: 50%;
             filter: blur(var(--blur-radius));
-            opacity: 0.15;
+            opacity: 0.18;
             will-change: transform;
             top: 0;
             left: 0;
@@ -205,6 +205,12 @@
             flex-shrink: 0;
         }
 
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: clamp(16px, 2.5vw, 28px);
+        }
+
         .nav-action-link {
             color: var(--muted);
             font-size: 0.9rem;
@@ -240,53 +246,57 @@
            6. HERO SECTION
            ========================================================================== */
         .hero {
-            min-height: 90vh;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             text-align: center;
-            padding: 140px 48px 60px;
+            padding: 140px 48px 80px;
         }
 
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.04);
+        .hero-logo-frame {
+            width: min(320px, 60vw);
+            height: min(320px, 60vw);
+            border-radius: clamp(32px, 6vw, 64px);
+            overflow: hidden;
+            margin-bottom: 36px;
+            background: #000;
             border: 1px solid var(--border);
-            padding: 6px 16px;
-            border-radius: 30px;
-            font-size: 0.8rem;
-            color: var(--muted);
-            letter-spacing: 0.04em;
-            margin-bottom: 32px;
+            box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85);
             animation: fadeUp 0.8s ease both;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            will-change: transform;
         }
 
-        .hero-badge span {
-            width: 6px; height: 6px; background: #34d399; border-radius: 50%;
+        .hero-logo-frame img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
         }
 
         .hero-title {
             font-family: 'Syne', sans-serif;
-            font-size: clamp(2.8rem, 7.5vw, 6rem);
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
             font-weight: 800;
             line-height: 1.05;
             letter-spacing: -0.04em;
             margin-bottom: 24px;
             color: var(--text);
             animation: fadeUp 0.8s ease 0.1s both;
-            max-width: 900px;
         }
 
         .hero-sub {
-            font-size: clamp(1rem, 1.8vw, 1.25rem);
+            font-size: clamp(1rem, 1.8vw, 1.2rem);
             color: var(--muted);
+            max-width: 680px;
             line-height: 1.6;
             margin-bottom: 48px;
             animation: fadeUp 0.8s ease 0.2s both;
-            max-width: 680px;
         }
 
         .hero-sub .font-syne {
@@ -315,9 +325,14 @@
             font-weight: 400;
             text-decoration: none;
             color: var(--text) !important;
+            font-style: normal;
+            letter-spacing: normal;
             white-space: nowrap;
             cursor: pointer;
             user-select: none;
+            -webkit-font-smoothing: antialiased;
+            backface-visibility: hidden;
+            transform: translateZ(0);
             transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease, border-color 0.2s ease;
             will-change: transform;
         }
@@ -331,6 +346,7 @@
             transform: translateY(-3px) translateZ(0);
             background: #222222;
             border-color: rgba(255, 255, 255, 0.25);
+            color: var(--text) !important;
         }
 
         .btn-secondary {
@@ -342,13 +358,14 @@
             transform: translateY(-3px) translateZ(0);
             background: rgba(255, 255, 255, 0.08);
             border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text) !important;
         }
 
         /* ==========================================================================
-           7. ENTERPRISE FEATURES SECTION
+           7. ENTERPRISE SUITE SECTION
            ========================================================================== */
-        .enterprise {
-            padding: 80px 32px 140px;
+        .ecosystem {
+            padding: 60px 32px 140px;
             max-width: 1100px;
             margin: 0 auto;
         }
@@ -370,32 +387,40 @@
             margin-bottom: 64px;
         }
 
-        .grid-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 32px;
+        .section-title span {
+            display: block;
+            white-space: nowrap;
         }
 
-        .ent-card {
+        .services-stack {
+            display: flex;
+            flex-direction: column;
+            gap: 48px;
+        }
+
+        .service-card {
             background: var(--surface);
             border: 1px solid var(--border);
             border-radius: var(--radius-card);
-            padding: 48px 40px;
+            padding: 48px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
+            gap: 36px;
             position: relative;
             overflow: hidden;
             transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: transform;
         }
 
-        .ent-card::before {
+        .service-card::before {
             content: '';
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             background: radial-gradient(
-                500px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+                600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
                 rgba(255, 255, 255, 0.06),
                 transparent 40%
             );
@@ -405,169 +430,80 @@
             z-index: 0;
         }
 
-        .ent-card:hover::before { opacity: 1; }
-        .ent-card:hover { border-color: rgba(255, 255, 255, 0.18); }
+        .service-card:hover::before { opacity: 1; }
 
-        .ent-card > * { position: relative; z-index: 1; }
+        .service-card:hover {
+            border-color: rgba(255, 255, 255, 0.18);
+        }
 
-        .ent-icon {
-            width: 48px;
-            height: 48px;
-            background: rgba(255, 255, 255, 0.04);
+        .card-body, .card-vis {
+            position: relative;
+            z-index: 1;
+        }
+
+        .card-vis {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border);
-            border-radius: 14px;
+            border-radius: 20px;
+            overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
-            color: var(--text);
         }
 
-        .ent-card h3 {
-            font-family: 'Syne', sans-serif;
-            font-size: 1.5rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: var(--text);
-        }
-
-        .ent-card p {
-            color: var(--muted);
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        /* ==========================================================================
-           8. SIMULATOR / CONFIG CALCULATOR SECTION
-           ========================================================================== */
-        .calculator-section {
-            padding: 60px 32px 140px;
-            max-width: 1100px;
-            margin: 0 auto;
-        }
-
-        .calc-box {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-card);
-            padding: 56px;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 48px;
-            align-items: center;
-        }
-
-        .calc-controls {
-            display: flex;
-            flex-direction: column;
-            gap: 32px;
-        }
-
-        .calc-group {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .calc-group label {
-            font-size: 0.9rem;
-            color: var(--muted);
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .calc-group label b {
-            color: var(--text);
-            font-family: 'Syne', sans-serif;
-        }
-
-        input[type="range"] {
-            -webkit-appearance: none;
+        .card-vis img {
             width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 3px;
-            outline: none;
+            height: auto;
+            display: block;
+            object-fit: contain;
         }
 
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: var(--text);
-            cursor: pointer;
-            transition: transform 0.15s ease;
-        }
-
-        input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.2);
-        }
-
-        .calc-output {
-            background: rgba(0, 0, 0, 0.5);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 40px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        .output-row {
-            display: flex;
-            justify-content: space-between;
+        .card-badge {
+            display: inline-flex;
             align-items: center;
-            padding-bottom: 16px;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .output-row:last-child {
-            border-bottom: none;
-            padding-bottom: 0;
-        }
-
-        .output-label {
+            gap: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
             color: var(--muted);
-            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            width: fit-content;
+            margin-bottom: 20px;
         }
 
-        .output-value {
+        .card-badge span {
+            width: 5px; height: 5px; background: #34d399; border-radius: 50%;
+        }
+
+        .card-content h3 {
+            font-size: 1.2rem;
+            color: var(--muted);
+            margin-bottom: 4px;
+            font-weight: 400;
+        }
+
+        .card-content h3.syne-huge {
             font-family: 'Syne', sans-serif;
-            font-size: 1.4rem;
+            font-size: clamp(2rem, 3.5vw, 2.8rem);
             font-weight: 800;
             color: var(--text);
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 20px;
         }
 
-        /* ==========================================================================
-           9. FOOTER SECTION
-           ========================================================================== */
-        footer {
-            padding: 60px 32px;
-            max-width: 1100px;
-            margin: 0 auto;
-            border-top: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .card-content p {
             color: var(--muted);
-            font-size: 0.85rem;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 32px;
         }
 
-        footer a {
-            color: var(--muted);
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-
-        footer a:hover { color: var(--text); }
-
-        .footer-links {
-            display: flex;
-            gap: 24px;
-        }
-
-        /* Animations & Utilities */
+        /* Animations */
         @keyframes fadeUp {
             from { opacity: 0; transform: translateY(24px); }
             to   { opacity: 1; transform: translateY(0); }
@@ -584,25 +520,89 @@
             transform: translateY(0);
         }
 
+        /* ==========================================================================
+           8. LEFT SECTION RAIL
+           ========================================================================== */
+        #section-rail {
+            position: fixed;
+            top: 50%;
+            left: 16px;
+            transform: translateY(-50%);
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            pointer-events: auto;
+        }
+
+        .rail-tick {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .tick-line {
+            width: 14px;
+            height: 2px;
+            background-color: rgba(217, 218, 230, 0.25);
+            border-radius: 2px;
+            transition: width 0.2s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease;
+        }
+
+        .tick-label {
+            font-size: 0.75rem;
+            color: var(--muted);
+            opacity: 0;
+            transform: translateX(-6px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        .rail-tick:hover .tick-line { width: 24px; background-color: rgba(217, 218, 230, 0.85); }
+        .rail-tick:hover .tick-label { opacity: 1; transform: translateX(0); }
+        .rail-tick.active .tick-line { width: 28px; background-color: var(--text); box-shadow: 0 0 8px rgba(217, 218, 230, 0.4); }
+        .rail-tick.active .tick-label { color: var(--text); opacity: 0.8; }
+
         /* Responsive */
         @media(max-width: 900px) {
-            .calc-box { grid-template-columns: 1fr; padding: 32px; }
+            #section-rail { display: none; }
+            .section-title span, .hero-sub { white-space: normal; }
+            .service-card { padding: 32px; }
+            .nav-dock { justify-content: space-between; }
             .nav-section-center, .nav-section-right { display: none; }
-            .burger { display: block; }
             .nav-dock.open .nav-section-center {
                 display: flex;
                 flex-direction: column;
                 position: absolute;
-                top: 70px; left: 0; width: 100%;
+                top: 70px;
+                left: 0;
+                width: 100%;
                 background: rgba(5, 5, 8, 0.95);
                 border: 1px solid var(--border);
                 border-radius: var(--radius-dock);
-                padding: 24px; gap: 16px;
+                padding: 24px;
+                gap: 16px;
             }
+            .burger { display: block; }
         }
     </style>
 </head>
 <body>
+
+<!-- LEFT SECTION RAIL -->
+<div id="section-rail">
+    <a href="#home" class="rail-tick active" data-label="Hero">
+        <span class="tick-line"></span>
+        <span class="tick-label">Hero</span>
+    </a>
+    <a href="#ecosystem" class="rail-tick" data-label="Enterprise">
+        <span class="tick-line"></span>
+        <span class="tick-label">Enterprise</span>
+    </a>
+</div>
 
 <!-- OVERLAY SCROLLBAR -->
 <div id="custom-scrollbar-track">
@@ -628,13 +628,15 @@
         <ul class="nav-links">
             <li><a href="https://cc.projectvoid.dev" target="_blank">Cloud Console</a></li>
             <li><a href="https://about.projectvoid.dev" target="_blank">About Void</a></li>
-            <li><a href="https://orgs.projectvoid.dev" class="active" target="_blank">For Organizations</a></li>
+            <li><a href="https://orgs.projectvoid.dev" class="active">For Organizations</a></li>
         </ul>
     </div>
 
     <div class="nav-section-right">
-        <a href="#calculator" class="nav-action-link">Fleet Estimator</a>
-        <a href="mailto:enterprise@projectvoid.dev" class="btn-secondary" style="height: 36px; padding: 0 16px; font-size: 0.85rem;">Request Access</a>
+        <div class="nav-actions">
+            <a href="#ecosystem" class="nav-action-link">Explore apps</a>
+            <a href="https://os.projectvoid.dev" class="nav-action-link">Make me switch</a>
+        </div>
     </div>
 
     <button class="burger" id="burgerBtn" aria-label="Toggle Navigation">
@@ -646,106 +648,78 @@
 
 <!-- HERO SECTION -->
 <section class="hero" id="home">
-    <div class="hero-badge">
-        <span></span> Void Enterprise Architecture
+    <div class="hero-logo-frame" id="hero-logo">
+        <img src="logo.jpg" alt="Void Logo" onerror="this.src='logo.png'; this.onerror=function(){this.src='logo.svg';}">
     </div>
 
-    <h1 class="hero-title">Sovereign infrastructure. Absolute control.</h1>
+    <h1 class="hero-title">Software for teams. Built without bloat.</h1>
 
     <p class="hero-sub">
-        Deploy privacy-first, zero-telemetry workflows across your entire organization without locking into corporate cloud monopolies.
+        Give your team independent tools, private cloud instances, and OS fleets controlled by <span class="font-syne">you</span>.
     </p>
 
     <div class="hero-buttons">
-        <a href="#calculator" class="btn-primary">Calculate Fleet Impact</a>
-        <a href="mailto:enterprise@projectvoid.dev" class="btn-secondary">Contact Architecture Team</a>
+        <a href="#ecosystem" class="btn-primary">Explore apps for your company</a>
+        <a href="https://os.projectvoid.dev" class="btn-secondary">Make me switch</a>
     </div>
 </section>
 
-<!-- ENTERPRISE FEATURES SECTION -->
-<section class="enterprise" id="features">
+<!-- ENTERPRISE SUITE SECTION -->
+<section class="ecosystem" id="ecosystem">
     <div class="reveal">
-        <p class="section-label">Enterprise Grade</p>
-        <h2 class="section-title">Engineered for mission-critical operations.</h2>
+        <p class="section-label">Organization Suite</p>
+        <h2 class="section-title">
+            <span>Sovereign infrastructure.</span>
+            <span>Zero telemetry.</span>
+        </h2>
     </div>
 
-    <div class="grid-cards reveal">
-        <div class="ent-card">
-            <div class="ent-icon">🛡️</div>
-            <h3>Zero Telemetry Guard</h3>
-            <p>Every packet leaving your organization is audited. No silent data harvesting, no backend tracking, and absolute compliance with strict data sovereignty standards.</p>
-        </div>
-        <div class="ent-card">
-            <div class="ent-icon">⚡</div>
-            <h3>Instant Air-Gapped Deploy</h3>
-            <p>Deploy the complete Void ecosystem on bare-metal internal servers or sovereign private clouds with containerized isolation and zero external dependencies.</p>
-        </div>
-        <div class="ent-card">
-            <div class="ent-icon">🔧</div>
-            <h3>Modular Fleet Governance</h3>
-            <p>Manage physical hardware fleets, user permissions, and node provisioning from a single unified management pane with granular role-based access.</p>
-        </div>
-    </div>
-</section>
-
-<!-- CALCULATOR SECTION -->
-<section class="calculator-section" id="calculator">
-    <div class="reveal" style="margin-bottom: 32px;">
-        <p class="section-label">Interactive Estimator</p>
-        <h2 class="section-title">Model your organization's transition.</h2>
-    </div>
-
-    <div class="calc-box reveal">
-        <div class="calc-controls">
-            <div class="calc-group">
-                <label for="seatsRange">Active Team Seats <b id="seatsVal">50</b></label>
-                <input type="range" id="seatsRange" min="5" max="1000" step="5" value="50">
+    <div class="services-stack reveal">
+        <!-- Void Fleet Management Card -->
+        <div class="service-card">
+            <div class="card-vis">
+                <img src="os.png" alt="VoidOS Fleet Preview">
             </div>
-            <div class="calc-group">
-                <label for="nodesRange">Sovereign Node Servers <b id="nodesVal">2</b></label>
-                <input type="range" id="nodesRange" min="1" max="32" step="1" value="2">
+            <div class="card-body">
+                <div class="card-badge"><span></span> Fleet Ready</div>
+                <div class="card-content">
+                    <h3>VoidOS</h3>
+                    <h3 class="syne-huge">for Workstations</h3>
+                    <p>Deploy high-performance, non-bloated desktop environments across your organization with centralized deployment tokens and total privacy enforcement.</p>
+                </div>
+                <a href="https://os.projectvoid.dev" class="btn-primary">Explore VoidOS Fleet →</a>
             </div>
-            <p style="font-size: 0.85rem; color: var(--muted); line-height: 1.5;">
-                Estimates based on standard private mesh configurations with automated cryptographic synchronization.
-            </p>
         </div>
 
-        <div class="calc-output">
-            <div class="output-row">
-                <span class="output-label">Estimated Latency Reduction</span>
-                <span class="output-value" id="latencyOut">-78%</span>
+        <!-- Void Brief Team Card -->
+        <div class="service-card">
+            <div class="card-vis">
+                <img src="brief.png" alt="Void Brief Teams Preview">
             </div>
-            <div class="output-row">
-                <span class="output-label">Telemetry Collected</span>
-                <span class="output-value" style="color: #34d399;">0 Bytes</span>
-            </div>
-            <div class="output-row">
-                <span class="output-label">Deployment Status</span>
-                <span class="output-value" style="font-size: 1.1rem; color: #facc15;">Ready for Pilot</span>
+            <div class="card-body">
+                <div class="card-badge"><span></span> Team Workspace</div>
+                <div class="card-content">
+                    <h3 class="syne-huge">High-impact team presentations</h3>
+                    <p>Generate clean, ultra-fast interactive presentations for keynotes, client decks, and internal syncs without slow cloud bloat or dynamic lag.</p>
+                </div>
+                <a href="https://brief.projectvoid.dev" class="btn-primary">Explore Void Brief →</a>
             </div>
         </div>
     </div>
 </section>
-
-<!-- FOOTER -->
-<footer>
-    <div>&copy; 2026 Void Ecosystem. All rights reserved.</div>
-    <div class="footer-links">
-        <a href="https://projectvoid.dev">Home</a>
-        <a href="https://about.projectvoid.dev">About</a>
-        <a href="mailto:enterprise@projectvoid.dev">Contact</a>
-    </div>
-</footer>
 
 <!-- SCRIPTS -->
 <script>
-    // SCROLL & LERP ENGINE
+    // CLEAN INERTIA & LERP SCROLL SYSTEM
     let currentScrollY = window.scrollY;
     let targetScrollY = window.scrollY;
     let scrollVelocity = 0;
     let isMoving = false;
 
     const navDock = document.getElementById('nav-dock');
+    const heroLogo = document.getElementById('hero-logo');
+    const blobField = document.getElementById('blob-field');
+    const cards = document.querySelectorAll('.service-card');
 
     window.addEventListener('wheel', (e) => {
         e.preventDefault();
@@ -773,11 +747,21 @@
 
         window.scrollTo(0, currentScrollY);
 
+        // Navbar height condensation on scroll
         if (currentScrollY > 60) {
             navDock.classList.add('scrolled');
         } else {
             navDock.classList.remove('scrolled');
         }
+
+        // Parallax effects on hero logo
+        if (heroLogo) heroLogo.style.transform = `translate3d(0, ${currentScrollY * 0.25}px, 0) scale(${Math.max(0.85, 1 - currentScrollY * 0.0008)})`;
+
+        // Subdued Velocity Card Pitch
+        const pitch = Math.max(-2, Math.min(2, scrollVelocity * 0.08));
+        cards.forEach(card => {
+            card.style.transform = `perspective(1000px) rotateX(${-pitch}deg)`;
+        });
 
         updateScrollbarPosition();
     }
@@ -854,7 +838,7 @@
     document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
     // Card Spotlight Effect
-    document.querySelectorAll('.ent-card').forEach(card => {
+    document.querySelectorAll('.service-card').forEach(card => {
         card.addEventListener('mousemove', e => {
             const rect = card.getBoundingClientRect();
             const x = e.clientX - rect.left;
@@ -864,19 +848,27 @@
         });
     });
 
-    // Calculator Interactive Bindings
-    const seatsRange = document.getElementById('seatsRange');
-    const nodesRange = document.getElementById('nodesRange');
-    const seatsVal = document.getElementById('seatsVal');
-    const nodesVal = document.getElementById('nodesVal');
+    // Left Section Rail Observer
+    const sections = document.querySelectorAll('section');
+    const railTicks = document.querySelectorAll('.rail-tick');
 
-    seatsRange.addEventListener('input', () => {
-        seatsVal.textContent = seatsRange.value;
-    });
+    const railObserver = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const activeId = entry.target.getAttribute('id');
+                railTicks.forEach(tick => {
+                    const href = tick.getAttribute('href').replace('#', '');
+                    if (href === activeId) {
+                        tick.classList.add('active');
+                    } else {
+                        tick.classList.remove('active');
+                    }
+                });
+            }
+        });
+    }, { threshold: 0.4 });
 
-    nodesRange.addEventListener('input', () => {
-        nodesVal.textContent = nodesRange.value;
-    });
+    sections.forEach(sec => railObserver.observe(sec));
 
     // Ambient Blobs Animation Engine
     class RegionBlob {
