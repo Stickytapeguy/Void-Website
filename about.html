@@ -38,7 +38,6 @@
            2. BASE & LAYOUT
            ========================================================================== */
         html {
-            scroll-behavior: smooth;
             background-color: var(--bg);
             scrollbar-width: none;
         }
@@ -109,6 +108,7 @@
             z-index: 0;
             pointer-events: none;
             overflow: hidden;
+            will-change: transform;
         }
 
         .blob {
@@ -147,8 +147,13 @@
             -webkit-backdrop-filter: blur(12px);
             border: 1px solid var(--border);
             border-radius: var(--radius-dock);
-            transition: all 0.9s cubic-bezier(0.29, 1.37, 0.74, 1);
+            transition: top 0.4s cubic-bezier(0.16, 1, 0.3, 1), height 0.4s cubic-bezier(0.16, 1, 0.3, 1);
             gap: 24px;
+        }
+
+        .nav-dock.scrolled {
+            top: 10px;
+            height: 52px;
         }
 
         .nav-section-left {
@@ -264,6 +269,7 @@
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            will-change: transform;
         }
 
         .hero-logo-frame img {
@@ -397,7 +403,8 @@
             gap: 20px;
             position: relative;
             overflow: hidden;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
         }
 
         .pillar-card::before, .story-box::before, .dev-card::before {
@@ -471,7 +478,8 @@
             gap: 24px;
             position: relative;
             overflow: hidden;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
         }
 
         .story-box p {
@@ -480,7 +488,6 @@
             line-height: 1.8;
         }
 
-        /* Developer Speak Card Styling */
         .dev-card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -491,7 +498,8 @@
             gap: 20px;
             position: relative;
             overflow: hidden;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform;
         }
 
         .dev-header {
@@ -631,7 +639,7 @@
 </div>
 
 <!-- 5 AMBIENT BLOBS -->
-<div class="blob-field">
+<div class="blob-field" id="blob-field">
     <div class="blob blob-1"></div>
     <div class="blob blob-2"></div>
     <div class="blob blob-3"></div>
@@ -640,7 +648,7 @@
 </div>
 
 <!-- NAVIGATION DOCK -->
-<nav class="nav-dock">
+<nav class="nav-dock" id="nav-dock">
     <div class="nav-section-left">
         <a href="https://projectvoid.dev" class="nav-logo">Void</a>
     </div>
@@ -669,7 +677,7 @@
 
 <!-- HERO SECTION -->
 <section class="hero" id="home">
-    <div class="hero-logo-frame">
+    <div class="hero-logo-frame" id="hero-logo">
         <img src="logo.jpg" alt="Void Logo" onerror="this.src='logo.png'; this.onerror=function(){this.src='logo.svg';}">
     </div>
 
@@ -721,13 +729,11 @@
         <h2 class="section-title">How Void started.</h2>
     </div>
 
-    <!-- Original Story Box -->
     <div class="story-box reveal">
         <p>It started out of sheer frustration. Every time you boot up a modern machine, you're forced to fight background telemetry, bypass forced cloud login prompts, and clean out software you never asked for. Hardware you bought and paid for starts acting like a rental device.</p>
         <p>We decided to build the alternative. Void isn't backed by venture capital or corporate shareholders looking to monetize every click. It's a return to local independence, clean codebases, and tools that actually respect the user.</p>
     </div>
 
-    <!-- See the Developer Speak Block -->
     <div class="dev-card reveal">
         <div class="dev-header">
             <span class="dev-tag">&lt;DEVELOPER_NOTE://STICKYTAPE_GUY&gt;</span>
@@ -739,7 +745,64 @@
 
 <!-- SCRIPTS -->
 <script>
-    // REAL-TIME INSTANT CUSTOM SCROLLBAR DRAGGING
+    // CLEAN INERTIA & LERP SCROLL SYSTEM
+    let currentScrollY = window.scrollY;
+    let targetScrollY = window.scrollY;
+    let scrollVelocity = 0;
+    let isMoving = false;
+
+    const navDock = document.getElementById('nav-dock');
+    const heroLogo = document.getElementById('hero-logo');
+    const blobField = document.getElementById('blob-field');
+    const cards = document.querySelectorAll('.pillar-card, .story-box, .dev-card');
+
+    window.addEventListener('wheel', (e) => {
+        e.preventDefault();
+        targetScrollY += e.deltaY * 0.85;
+        const maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+        targetScrollY = Math.max(0, Math.min(targetScrollY, maxScroll));
+        if (!isMoving) {
+            isMoving = true;
+            requestAnimationFrame(updateScrollPhysics);
+        }
+    }, { passive: false });
+
+    function updateScrollPhysics() {
+        const diff = targetScrollY - currentScrollY;
+        scrollVelocity = diff * 0.1;
+        currentScrollY += scrollVelocity;
+
+        if (Math.abs(diff) < 0.1) {
+            currentScrollY = targetScrollY;
+            scrollVelocity = 0;
+            isMoving = false;
+        } else {
+            requestAnimationFrame(updateScrollPhysics);
+        }
+
+        window.scrollTo(0, currentScrollY);
+
+        // Navbar height condensation on scroll
+        if (currentScrollY > 60) {
+            navDock.classList.add('scrolled');
+        } else {
+            navDock.classList.remove('scrolled');
+        }
+
+        // Parallax effects on background & hero logo
+        /*if (blobField) blobField.style.transform = `translate3d(0, ${currentScrollY * 0.12}px, 0)`;*/
+        if (heroLogo) heroLogo.style.transform = `translate3d(0, ${currentScrollY * 0.25}px, 0) scale(${Math.max(0.85, 1 - currentScrollY * 0.0008)})`;
+
+        // Subdued Velocity Card Pitch
+        const pitch = Math.max(-2, Math.min(2, scrollVelocity * 0.08));
+        cards.forEach(card => {
+            card.style.transform = `perspective(1000px) rotateX(${-pitch}deg)`;
+        });
+
+        updateScrollbarPosition();
+    }
+
+    // OVERLAY SCROLLBAR DRAG
     const thumb = document.getElementById('custom-scrollbar-thumb');
     const track = document.getElementById('custom-scrollbar-track');
     let isDragging = false;
@@ -755,10 +818,6 @@
         thumb.style.height = `${thumbHeight}px`;
         thumb.style.transform = `translate3d(0, ${thumbTop}px, 0)`;
     }
-
-    window.addEventListener('scroll', () => {
-        if (!isDragging) updateScrollbarPosition();
-    }, { passive: true });
 
     window.addEventListener('resize', updateScrollbarPosition);
     updateScrollbarPosition();
@@ -782,8 +841,9 @@
 
         if (availableTrack > 0) {
             const scrollRatio = deltaY / availableTrack;
-            const targetScroll = startScrollTop + (scrollRatio * maxScroll);
-            window.scrollTo({ top: targetScroll, behavior: 'instant' });
+            targetScrollY = startScrollTop + (scrollRatio * maxScroll);
+            currentScrollY = targetScrollY;
+            window.scrollTo(0, targetScrollY);
             updateScrollbarPosition();
         }
     });
@@ -798,9 +858,8 @@
 
     // Mobile nav toggle
     const burger = document.getElementById('burgerBtn');
-    const dock = document.querySelector('.nav-dock');
     burger.addEventListener('click', () => {
-        dock.classList.toggle('open');
+        navDock.classList.toggle('open');
     });
 
     // Reveal on scroll observer
