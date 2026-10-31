@@ -262,9 +262,8 @@
         }
 
         .hero-logo-frame {
-            width: min(480px, 80vw);
-            height: min(480px, 80vw);
-            border-radius: clamp(32px, 6vw, 64px);
+            width: min(1600px, 130vw);
+            border-radius: clamp(16px, 3vw, 32px);
             overflow: hidden;
             margin-bottom: 36px;
             background: #000;
@@ -280,8 +279,7 @@
 
         .hero-logo-frame img {
             width: 100%;
-            height: 100%;
-            object-fit: cover;
+            height: auto;
             display: block;
         }
 
@@ -790,7 +788,7 @@
         <img src="voidium.png" alt="Voidium Logo">
     </div>
     
-    <h1 class="hero-title">&lt;Voidium&gt;</h1>
+    <h1 class="hero-title">Voidium</h1>
     
     <p class="hero-sub">
         A modern language that writes itself — <span class="font-syne">clean, fast, and transpiled to Rust</span>.
@@ -1077,9 +1075,9 @@ functions.draw {
 
         if (heroLogo) heroLogo.style.transform = `translate3d(0, ${currentScrollY * 0.25}px, 0) scale(${Math.max(0.85, 1 - currentScrollY * 0.0008)})`;
 
-        const pitch = Math.max(-2, Math.min(2, scrollVelocity * 0.08));
+        const pitch = Math.max(-1, Math.min(1, scrollVelocity * 0.04));
         cards.forEach(card => {
-            card.style.transform = `perspective(1000px) rotateX(${-pitch}deg)`;
+            card.style.transform = `perspective(1200px) rotateX(${-pitch}deg)`;
         });
 
         updateScrollbarPosition();
