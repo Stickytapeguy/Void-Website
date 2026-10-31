@@ -1,9 +1,9 @@
-# Exact root hits
+# ONLY rewrite subdomains, do not touch the root apex (projectvoid.dev)
 https://about.projectvoid.dev/      /about.html    200
-https://voidium.projectvoid.dev/    /voidium.html  200
-https://orgs.projectvoid.dev/       /orgs.html     200
-
-# Subpath catch-alls
 https://about.projectvoid.dev/*     /about.html    200
+
+https://voidium.projectvoid.dev/    /voidium.html  200
 https://voidium.projectvoid.dev/*   /voidium.html  200
+
+https://orgs.projectvoid.dev/       /orgs.html     200
 https://orgs.projectvoid.dev/*      /orgs.html     200
