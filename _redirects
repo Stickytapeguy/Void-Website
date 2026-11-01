@@ -1,4 +1,3 @@
-# ONLY rewrite subdomains, do not touch the root apex (projectvoid.dev)
 https://about.projectvoid.dev/      /about.html    200
 https://about.projectvoid.dev/*     /about.html    200
 
